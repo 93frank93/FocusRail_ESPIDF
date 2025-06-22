@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "st_7735_menu_display.hplay.h"
+#include "st_7735_menu_display.h"
 
 
 // Global variables
