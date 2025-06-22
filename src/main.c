@@ -32,7 +32,8 @@ void app_main(void) {
     
     // Display welcome message
     display_welcome();
-    
+    display_flush_dirty();  
+
     vTaskDelay(pdMS_TO_TICKS(2000));
     
     menu_display();

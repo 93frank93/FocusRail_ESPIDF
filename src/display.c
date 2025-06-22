@@ -8,7 +8,18 @@
 
 #include "display.h"
 
+#define TFT_WIDTH 128
+#define TFT_HEIGHT 160
+
+static uint16_t framebuffer[TFT_WIDTH * TFT_HEIGHT];
+
+static int dirty_x0 = TFT_WIDTH;
+static int dirty_y0 = TFT_HEIGHT;
+static int dirty_x1 = 0;
+static int dirty_y1 = 0;
+
 static const char *TAG = "DISPLAY";
+
 
 // ST7735 Commands  
 #define ST7735_NOP          0x00
@@ -157,6 +168,56 @@ static void tft_write_command(uint8_t cmd);
 static void tft_write_data(uint8_t data);
 static void tft_write_data_16(uint16_t data);
 static void tft_set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
+
+static void mark_dirty(int x0, int y0, int x1, int y1) {
+    if (x0 < dirty_x0) dirty_x0 = x0;
+    if (y0 < dirty_y0) dirty_y0 = y0;
+    if (x1 > dirty_x1) dirty_x1 = x1;
+    if (y1 > dirty_y1) dirty_y1 = y1;
+}
+
+void framebuffer_set_pixel(int x, int y, uint16_t color) {
+    if (x < 0 || x >= TFT_WIDTH || y < 0 || y >= TFT_HEIGHT) return;
+    int idx = y * TFT_WIDTH + x;
+    if (framebuffer[idx] != color) {
+        framebuffer[idx] = color;
+        mark_dirty(x, y, x, y);
+    }
+}
+
+void display_fill_screen(uint16_t color) {
+    for (int i = 0; i < TFT_WIDTH * TFT_HEIGHT; i++) {
+        framebuffer[i] = color;
+    }
+    mark_dirty(0, 0, TFT_WIDTH - 1, TFT_HEIGHT - 1);
+}
+
+void display_flush_dirty(void) {
+    if (dirty_x0 > dirty_x1 || dirty_y0 > dirty_y1) {
+        // No dirty region
+        return;
+    }
+    
+    int w = dirty_x1 - dirty_x0 + 1;
+    int h = dirty_y1 - dirty_y0 + 1;
+    
+    tft_set_addr_window(dirty_x0, dirty_y0, dirty_x1, dirty_y1);
+    
+    for (int y = dirty_y0; y <= dirty_y1; y++) {
+        spi_transaction_t t = {};
+        t.length = w * 16;  // bits (16 bits per pixel)
+        t.tx_buffer = &framebuffer[y * TFT_WIDTH + dirty_x0];
+        gpio_set_level(TFT_DC_PIN, 1);  // Data mode
+        spi_device_polling_transmit(spi, &t);
+    }
+    
+    // Reset dirty rectangle
+    dirty_x0 = TFT_WIDTH;
+    dirty_y0 = TFT_HEIGHT;
+    dirty_x1 = 0;
+    dirty_y1 = 0;
+}
+
 
 void display_init(void) {
     esp_err_t ret;
@@ -375,7 +436,7 @@ static void tft_set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) 
 
 
 
-void display_fill_screen(uint16_t color) {
+/* void display_fill_screen(uint16_t color) {
     tft_set_addr_window(0, 0, TFT_WIDTH - 1, TFT_HEIGHT - 1);
     gpio_set_level(TFT_DC_PIN, 1);  // Data mode
 
@@ -396,13 +457,10 @@ void display_fill_screen(uint16_t color) {
 
         total_pixels -= chunk_size;
     }
-}
+}*/
 
 void display_draw_pixel(int16_t x, int16_t y, uint16_t color) {
-    if (x < 0 || x >= TFT_WIDTH || y < 0 || y >= TFT_HEIGHT) return;
-    
-    tft_set_addr_window(x, y, x, y);
-    tft_write_data_16(color);
+        framebuffer_set_pixel(x, y, color);
 }
 
 void display_draw_char(int16_t x, int16_t y, char c, uint16_t color, uint16_t bg, uint8_t size) {
@@ -415,21 +473,21 @@ void display_draw_char(int16_t x, int16_t y, char c, uint16_t color, uint16_t bg
         for (int j = 0; j < 7; j++) {
             if (line & 0x01) {
                 if (size == 1) {
-                    display_draw_pixel(x + i, y + j, color);
+                    framebuffer_set_pixel(x + i, y + j, color);
                 } else {
                     for (int a = 0; a < size; a++) {
                         for (int b = 0; b < size; b++) {
-                            display_draw_pixel(x + (i * size) + a, y + (j * size) + b, color);
+                            framebuffer_set_pixel(x + (i * size) + a, y + (j * size) + b, color);
                         }
                     }
                 }
             } else if (bg != color) {
                 if (size == 1) {
-                    display_draw_pixel(x + i, y + j, bg);
+                    framebuffer_set_pixel(x + i, y + j, bg);
                 } else {
                     for (int a = 0; a < size; a++) {
                         for (int b = 0; b < size; b++) {
-                            display_draw_pixel(x + (i * size) + a, y + (j * size) + b, bg);
+                            framebuffer_set_pixel(x + (i * size) + a, y + (j * size) + b, bg);
                         }
                     }
                 }

@@ -195,6 +195,8 @@ static void display_main_menu(void) {
     
     display_print_string(10, 105, menu_config.motor_enabled ? "Motor: ON" : "Motor: OFF", 
                        menu_config.motor_enabled ? GREEN : RED, TRANSPARENT, 1);
+
+                       display_flush_dirty();  
 }
 
 // Move menu display
@@ -220,6 +222,7 @@ static void display_move_menu(void) {
         display_print_string(10, 100, "Motor: DISABLED", RED, TRANSPARENT, 1);
         display_print_string(10, 110, "Enable in Settings", RED, TRANSPARENT, 1);
     }
+display_flush_dirty();  
 }
 
 // Settings menu display
@@ -245,6 +248,7 @@ static void display_settings_menu(void) {
     
     display_print_string(10, 110, menu_config.menu_selection == 3 ? ">Back" : " Back", 
                        menu_config.menu_selection == 3 ? YELLOW : WHITE, TRANSPARENT, 1);
+display_flush_dirty();  
 }
 
 // Auto stack menu display
@@ -260,6 +264,7 @@ static void display_auto_stack_menu(void) {
     display_print_string(10, 80, "- Auto capture", WHITE, TRANSPARENT, 1);
     
     display_print_string(10, 100, "Press to return", YELLOW, TRANSPARENT, 1);
+display_flush_dirty();  
 }
 
 // Menu task

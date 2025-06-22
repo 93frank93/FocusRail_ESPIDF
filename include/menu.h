@@ -33,6 +33,11 @@ void menu_update_focus_position(int delta);
 int menu_get_focus_position(void);
 int menu_get_step_size(void);
 bool menu_get_motor_enabled(void);
+extern void framebuffer_set_pixel(int x, int y, uint16_t color);
+extern void draw_char_to_framebuffer(int x, int y, char c, uint16_t color);
+extern void draw_string_to_framebuffer(int x, int y, const char* str, uint16_t color);
+extern void draw_rect_to_framebuffer(int x, int y, int w, int h, uint16_t color);
+extern void display_flush_dirty(void);
 
 // Callback function type for stepper motor control
 typedef void (*stepper_move_callback_t)(int steps);
