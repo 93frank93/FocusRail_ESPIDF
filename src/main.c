@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "st_7735_menu_display.hplay.h"
+
 
 // Global variables
 menu_state_t current_menu = MENU_MAIN;
@@ -1137,31 +1139,14 @@ void load_settings(void) {
 
 // Example main function to tie everything together
 void app_main(void) {
-    // Initialize ST7735 LCD
-    st7735_pins_t lcd_pins = {
-        .sclk_pin = 18,
-        .mosi_pin = 23,
-        .cs_pin = 5,
-        .dc_pin = 2,
-        .rst_pin = 4
-    };
-    
-    st7735_init(lcd_pins);
-    st7735_set_rotation(0);
-    
-    // Initialize menu system
+    display_init();  // Use Adafruit driver
+
+    // Optional: show splash screen
+    tft.setCursor(10, 40);
+    tft.setTextColor(ST77XX_CYAN);
+    tft.setTextSize(2);
+    tft.print("Macro Rail");
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
     menu_init();
-    
-    // Show startup screen
-    st7735_fill_screen(ST7735_BLACK);
-    st7735_print_text(15, 60, "MACRO RAIL v1.0", ST7735_CYAN, ST7735_BLACK);
-    st7735_print_text(20, 80, "Initializing...", ST7735_WHITE, ST7735_BLACK);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    
-    menu_changed = true;
-    
-    // Main loop is handled by FreeRTOS tasks
-    while (1) {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
 }
