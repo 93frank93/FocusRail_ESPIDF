@@ -23,6 +23,7 @@
 #define MAGENTA             0xF81F
 #define YELLOW              0xFFE0
 #define WHITE               0xFFFF
+#define TRANSPARENT         0x0000
 
 // Function prototypes
 void display_init(void);

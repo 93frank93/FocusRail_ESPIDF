@@ -174,92 +174,92 @@ static void handle_auto_stack_menu_input(encoder_event_t *event) {
 
 // Main menu display
 static void display_main_menu(void) {
-    display_clear_screen();
+    display_fill_screen(BLACK);      
     
-    display_print_string(10, 10, "FOCUS RAIL", COLOR_WHITE, COLOR_TRANSPARENT, 2);
-    display_print_string(10, 30, "----------", COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 10, "FOCUS RAIL", WHITE, TRANSPARENT, 2);
+    display_print_string(10, 30, "----------", WHITE, TRANSPARENT, 1);
     
     display_print_string(10, 45, menu_config.menu_selection == 0 ? ">Move" : " Move", 
-                       menu_config.menu_selection == 0 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 0 ? YELLOW : WHITE, TRANSPARENT, 1);
     display_print_string(10, 55, menu_config.menu_selection == 1 ? ">Settings" : " Settings", 
-                       menu_config.menu_selection == 1 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 1 ? YELLOW : WHITE, TRANSPARENT, 1);
     display_print_string(10, 65, menu_config.menu_selection == 2 ? ">Auto Stack" : " Auto Stack", 
-                       menu_config.menu_selection == 2 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 2 ? YELLOW : WHITE, TRANSPARENT, 1);
     
     char buffer[32];
     sprintf(buffer, "Pos: %d", menu_config.focus_position);
-    display_print_string(10, 85, buffer, COLOR_GREEN, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 85, buffer, GREEN, TRANSPARENT, 1);
     
     sprintf(buffer, "Step: %d", menu_config.step_size);
-    display_print_string(10, 95, buffer, COLOR_GREEN, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 95, buffer, GREEN, TRANSPARENT, 1);
     
     display_print_string(10, 105, menu_config.motor_enabled ? "Motor: ON" : "Motor: OFF", 
-                       menu_config.motor_enabled ? COLOR_GREEN : COLOR_RED, COLOR_TRANSPARENT, 1);
+                       menu_config.motor_enabled ? GREEN : RED, TRANSPARENT, 1);
 }
 
 // Move menu display
 static void display_move_menu(void) {
-    display_clear_screen();
+    display_fill_screen(BLACK);
     
-    display_print_string(10, 10, "MOVE MODE", COLOR_WHITE, COLOR_TRANSPARENT, 2);
-    display_print_string(10, 30, "---------", COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 10, "MOVE MODE", WHITE, TRANSPARENT, 2);
+    display_print_string(10, 30, "---------", WHITE, TRANSPARENT, 1);
     
     char buffer[32];
     sprintf(buffer, "Position: %d", menu_config.focus_position);
-    display_print_string(10, 45, buffer, COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 45, buffer, WHITE, TRANSPARENT, 1);
     
     sprintf(buffer, "Step Size: %d", menu_config.step_size);
-    display_print_string(10, 55, buffer, COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 55, buffer, WHITE, TRANSPARENT, 1);
     
-    display_print_string(10, 70, "Rotate: Move", COLOR_YELLOW, COLOR_TRANSPARENT, 1);
-    display_print_string(10, 80, "Press: Menu", COLOR_YELLOW, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 70, "Rotate: Move", YELLOW, TRANSPARENT, 1);
+    display_print_string(10, 80, "Press: Menu", YELLOW, TRANSPARENT, 1);
     
     if (menu_config.motor_enabled) {
-        display_print_string(10, 100, "Motor: ENABLED", COLOR_GREEN, COLOR_TRANSPARENT, 1);
+        display_print_string(10, 100, "Motor: ENABLED", GREEN, TRANSPARENT, 1);
     } else {
-        display_print_string(10, 100, "Motor: DISABLED", COLOR_RED, COLOR_TRANSPARENT, 1);
-        display_print_string(10, 110, "Enable in Settings", COLOR_RED, COLOR_TRANSPARENT, 1);
+        display_print_string(10, 100, "Motor: DISABLED", RED, TRANSPARENT, 1);
+        display_print_string(10, 110, "Enable in Settings", RED, TRANSPARENT, 1);
     }
 }
 
 // Settings menu display
 static void display_settings_menu(void) {
-    display_clear_screen();
+    display_fill_screen(BLACK);
     
-    display_print_string(10, 10, "SETTINGS", COLOR_WHITE, COLOR_TRANSPARENT, 2);
-    display_print_string(10, 30, "--------", COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 10, "SETTINGS", WHITE, TRANSPARENT, 2);
+    display_print_string(10, 30, "--------", WHITE, TRANSPARENT, 1);
     
     display_print_string(10, 45, menu_config.menu_selection == 0 ? ">Step Size" : " Step Size", 
-                       menu_config.menu_selection == 0 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 0 ? YELLOW : WHITE, TRANSPARENT, 1);
     char buffer[32];
     sprintf(buffer, "  Current: %d", menu_config.step_size);
-    display_print_string(10, 55, buffer, COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 55, buffer, WHITE, TRANSPARENT, 1);
     
     display_print_string(10, 70, menu_config.menu_selection == 1 ? ">Motor Enable" : " Motor Enable", 
-                       menu_config.menu_selection == 1 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 1 ? YELLOW : WHITE, TRANSPARENT, 1);
     sprintf(buffer, "  Status: %s", menu_config.motor_enabled ? "ON" : "OFF");
-    display_print_string(10, 80, buffer, menu_config.motor_enabled ? COLOR_GREEN : COLOR_RED, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 80, buffer, menu_config.motor_enabled ? GREEN : RED, TRANSPARENT, 1);
     
     display_print_string(10, 95, menu_config.menu_selection == 2 ? ">Reset Position" : " Reset Position", 
-                       menu_config.menu_selection == 2 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 2 ? YELLOW : WHITE, TRANSPARENT, 1);
     
     display_print_string(10, 110, menu_config.menu_selection == 3 ? ">Back" : " Back", 
-                       menu_config.menu_selection == 3 ? COLOR_YELLOW : COLOR_WHITE, COLOR_TRANSPARENT, 1);
+                       menu_config.menu_selection == 3 ? YELLOW : WHITE, TRANSPARENT, 1);
 }
 
 // Auto stack menu display
 static void display_auto_stack_menu(void) {
-    display_clear_screen();
+    display_fill_screen(BLACK);
     
-    display_print_string(10, 10, "AUTO STACK", COLOR_WHITE, COLOR_TRANSPARENT, 2);
-    display_print_string(10, 30, "----------", COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 10, "AUTO STACK", WHITE, TRANSPARENT, 2);
+    display_print_string(10, 30, "----------", WHITE, TRANSPARENT, 1);
     
-    display_print_string(10, 45, "Coming Soon!", COLOR_YELLOW, COLOR_TRANSPARENT, 1);
-    display_print_string(10, 60, "- Set start/end", COLOR_WHITE, COLOR_TRANSPARENT, 1);
-    display_print_string(10, 70, "- Set intervals", COLOR_WHITE, COLOR_TRANSPARENT, 1);
-    display_print_string(10, 80, "- Auto capture", COLOR_WHITE, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 45, "Coming Soon!", YELLOW, TRANSPARENT, 1);
+    display_print_string(10, 60, "- Set start/end", WHITE, TRANSPARENT, 1);
+    display_print_string(10, 70, "- Set intervals", WHITE, TRANSPARENT, 1);
+    display_print_string(10, 80, "- Auto capture", WHITE, TRANSPARENT, 1);
     
-    display_print_string(10, 100, "Press to return", COLOR_YELLOW, COLOR_TRANSPARENT, 1);
+    display_print_string(10, 100, "Press to return", YELLOW, TRANSPARENT, 1);
 }
 
 // Menu task

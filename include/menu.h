@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "encoder.h"
 
 // Menu states
 typedef enum {
@@ -11,12 +12,6 @@ typedef enum {
     MENU_SETTINGS,
     MENU_AUTO_STACK
 } menu_state_t;
-
-// Encoder event structure (should match encoder.h)
-typedef struct {
-    int direction;  // 1 for CW, -1 for CCW
-    bool button_pressed;
-} encoder_event_t;
 
 // Menu configuration structure
 typedef struct {
