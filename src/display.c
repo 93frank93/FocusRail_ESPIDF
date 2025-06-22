@@ -321,22 +321,26 @@ void display_init(void) {
 
 static void tft_write_command(uint8_t cmd) {
     gpio_set_level(TFT_DC_PIN, 0);  // Command mode
-    
-    spi_transaction_t t = {};
-    t.length = 8;
-    t.tx_buffer = &cmd;
-    
-    spi_device_polling_transmit(spi, &t);
+
+    spi_transaction_t t = {
+        .flags = SPI_TRANS_USE_TXDATA,
+        .length = 8,
+    };
+    t.tx_data[0] = cmd;
+
+    ESP_ERROR_CHECK(spi_device_polling_transmit(spi, &t));
 }
 
 static void tft_write_data(uint8_t data) {
     gpio_set_level(TFT_DC_PIN, 1);  // Data mode
-    
-    spi_transaction_t t = {};
-    t.length = 8;
-    t.tx_buffer = &data;
-    
-    spi_device_polling_transmit(spi, &t);
+
+    spi_transaction_t t = {
+        .flags = SPI_TRANS_USE_TXDATA,
+        .length = 8,
+    };
+    t.tx_data[0] = data;
+
+    ESP_ERROR_CHECK(spi_device_polling_transmit(spi, &t));
 }
 
 static void tft_write_data_16(uint16_t data) {
@@ -367,11 +371,30 @@ static void tft_set_addr_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) 
     tft_write_command(ST7735_RAMWR);
 }
 
+#define FILL_CHUNK_SIZE 128  // Number of pixels per chunk (adjust as needed)
+
+
+
 void display_fill_screen(uint16_t color) {
     tft_set_addr_window(0, 0, TFT_WIDTH - 1, TFT_HEIGHT - 1);
-    
-    for (int i = 0; i < TFT_WIDTH * TFT_HEIGHT; i++) {
-        tft_write_data_16(color);
+    gpio_set_level(TFT_DC_PIN, 1);  // Data mode
+
+    uint16_t buffer[FILL_CHUNK_SIZE];
+    for (int i = 0; i < FILL_CHUNK_SIZE; i++) {
+        buffer[i] = __builtin_bswap16(color);  // Convert to big endian (MSB first)
+    }
+
+    int total_pixels = TFT_WIDTH * TFT_HEIGHT;
+    while (total_pixels > 0) {
+        int chunk_size = (total_pixels > FILL_CHUNK_SIZE) ? FILL_CHUNK_SIZE : total_pixels;
+
+        spi_transaction_t t = {
+            .length = chunk_size * 16,  // in bits
+            .tx_buffer = buffer,
+        };
+        ESP_ERROR_CHECK(spi_device_polling_transmit(spi, &t));
+
+        total_pixels -= chunk_size;
     }
 }
 
