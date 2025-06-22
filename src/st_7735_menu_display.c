@@ -1,5 +1,5 @@
 // st7735_display.c
-#include "st_7735_menu_display.hplay.h"
+#include "st_7735_menu_display.h"
 #include "Adafruit_ST7735.h"
 #include "Adafruit_GFX.h"
 
