@@ -1,7 +1,7 @@
 // st7735_display.c
 #include "st_7735_menu_display.h"
-#include "Adafruit_ST7735.h"
-#include "Adafruit_GFX.h"
+#include <Adafruit_ST7735.h>
+#include <Adafruit_GFX.h>
 
 #include "driver/spi_master.h"
 #include "freertos/FreeRTOS.h"

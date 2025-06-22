@@ -1,7 +1,7 @@
 // st7735_display.h
 #pragma once
 
-#include "Adafruit_ST7735.h"
+#include <Adafruit_ST7735.h>
 
 #define TFT_CS    5
 #define TFT_DC    2
